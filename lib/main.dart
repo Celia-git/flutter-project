@@ -1,8 +1,14 @@
 
 import 'package:flutter/material.dart';
 import 'background.dart' as background;
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -71,7 +77,7 @@ class _HomePage extends State<HomePage> {
               // Change background button
               TextButton(
                   onPressed: () {
-                    background.Background.image = defaultImage!;
+                    background.Background.image = defaultImage;
                     didChangeDependencies();
                   },
                   style: TextButton.styleFrom(
