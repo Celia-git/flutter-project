@@ -1,4 +1,4 @@
 class Background {
   // Default background image
-  static var image = "abstract";
+  static String image = "abstract";
 }

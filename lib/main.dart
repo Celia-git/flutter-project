@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'background.dart' as background;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -16,6 +19,9 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
 
   const MyApp({super.key});
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
   // Widget as Application Root
 
   @override
@@ -42,6 +48,7 @@ class HomePage extends StatefulWidget {
 // Home Page class
 class _HomePage extends State<HomePage> {
   final String defaultImage = "abstract";
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? image = background.Background.image;
 
   @override
@@ -57,6 +64,15 @@ class _HomePage extends State<HomePage> {
   void _setImage() {
     image = background.Background.image;
     setState(() {});
+    analytics.setAnalyticsCollectionEnabled(true);
+
+    // Log the change image event
+    analytics.logEvent(
+      name: 'image_change',
+      parameters: {
+        'image_value': "$image",
+      },
+    );
   }
 
   @override
