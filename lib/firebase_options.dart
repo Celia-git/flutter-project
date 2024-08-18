@@ -47,6 +47,7 @@ class DefaultFirebaseOptions {
     projectId: 'new-project34127856',
     authDomain: 'new-project34127856.firebaseapp.com',
     storageBucket: 'new-project34127856.appspot.com',
+    measurementId: 'G-C5MRT34CQ4',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -82,6 +83,7 @@ class DefaultFirebaseOptions {
     projectId: 'new-project34127856',
     authDomain: 'new-project34127856.firebaseapp.com',
     storageBucket: 'new-project34127856.appspot.com',
+    measurementId: 'G-8XP8VV2ZXV',
   );
 
 }
