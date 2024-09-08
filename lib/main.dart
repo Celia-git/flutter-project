@@ -5,6 +5,7 @@ import 'background.dart' as background;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 
 Future<void> main() async {
@@ -19,9 +20,10 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
 
   const MyApp({super.key});
-  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  static FirebaseDatabase database = FirebaseDatabase.instance;
+
+
+
   // Widget as Application Root
 
   @override
@@ -119,7 +121,10 @@ class HomePage extends StatefulWidget {
 // Home Page class
 class _HomePage extends State<HomePage> {
   final String defaultImage = "abstract";
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
+
   String? image = background.Background.image;
 
   @override
@@ -132,7 +137,7 @@ class _HomePage extends State<HomePage> {
   }
 
   // Set background image on Home Page
-  void _setImage() {
+  Future<void> _setImage() async {
     image = background.Background.image;
     setState(() {});
     analytics.setAnalyticsCollectionEnabled(true);
@@ -142,9 +147,14 @@ class _HomePage extends State<HomePage> {
       name: 'image_change',
       parameters: {
         'image_value': "$image",
-      },
-    );
-  }
+      });
+
+    // Add image use to database
+    ref.set({
+      "current_background":image,
+    });
+
+    }
 
   @override
   Widget build(BuildContext context) {
