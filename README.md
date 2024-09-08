@@ -1,16 +1,7 @@
-# new_project
+## flutter-project
 
-A new Flutter project.
+# A demo which showcases my ability to create a flutter app written in dart using Android Studio.  
 
-## Getting Started
+The App is configured with firebase to track **google analytics**, write data to the **realtime database**, and keep user accounts secure with **authentication** based on email and password.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+App defaults to user login and allows existing users to log in, or new users to sign up.  New users are added to firebase authentication for future logins.  Home page displays a background; user can swipe through multiple pages and set the background on home.  After navigating back to home, an event, image_changed, is incremented in firebase analytics and the choice of image is written to the realtime database. 
