@@ -1,4 +1,5 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'background.dart' as background;
 import 'package:firebase_core/firebase_core.dart';
@@ -9,12 +10,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform
   );
   runApp(const MyApp());
 }
 
-// Stateless App class
+// Stateless App class: Login Screen
 class MyApp extends StatelessWidget {
 
   const MyApp({super.key});
@@ -31,9 +32,80 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
-      home: const HomePage(title: "Home Page"),
+      home:
+      StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, AsyncSnapshot<User?> snapshot){
+            if (snapshot.hasData && snapshot.data != null) {
+              return const HomePage(title: 'Home');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            else{
+              return LoginScreen();
+            }
+          })
     );
   }
+}
+
+// Login Screen
+class LoginScreen extends StatelessWidget {
+
+  LoginScreen({super.key});
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Login"),
+      ),
+      body: Center(
+        child: Form(
+          child:Column(
+            children: [
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  hintText: "Email",
+                ),
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  hintText: "Password",
+                ),
+              ),
+              ElevatedButton(
+                onPressed: (){
+                  if (_emailController.text.isNotEmpty && _passwordController.text.length>6){
+                    login(_emailController, _passwordController);
+                  } else {
+                    debugPrint("Email Empty or password invalid");
+                  }
+                },
+                  child: const Text("Login"),
+              ),
+              TextButton(onPressed: (){
+                final auth = FirebaseAuth.instance;
+                auth.createUserWithEmailAndPassword(
+                  email: _emailController.text,
+                  password: _passwordController.text
+                );
+              }, child: const Text("Sign Up"),
+              )
+            ],
+          )
+        )
+      ),
+    );
+  }
+
 }
 
 // Home Page Stateful Widget
@@ -115,8 +187,16 @@ class _HomePage extends State<HomePage> {
                     return const SecondPage(title: "Second Page");
                   }));
                 }
-              }))
-            ])));
+              })),
+
+              ElevatedButton(onPressed: (){
+                FirebaseAuth.instance.signOut();
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return LoginScreen();
+                }));
+              }, child: const Text("Logout", style: TextStyle()),),
+
+              ])));
   }
 }
 
@@ -292,4 +372,12 @@ class ChangeBackgroundButton extends StatelessWidget {
             const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         child: Text("Set $image as home page background"));
   }
+}
+
+Future<void> login(dynamic _emailController, dynamic _passwordController) async {
+  final auth = FirebaseAuth.instance;
+  auth.signInWithEmailAndPassword(
+    email: _emailController.text,
+    password: _passwordController.text
+  );
 }
